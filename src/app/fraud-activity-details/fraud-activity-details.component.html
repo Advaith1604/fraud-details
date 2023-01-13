@@ -1,0 +1,268 @@
+<div class="p-3 border bg-light">
+  <h6>FRAUD ACTIVITY DETAILS</h6>
+  <div class="row my-4">
+    <div class="col-md-12" ngModelGroup="fraudIntakeActivityBean">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Product Type</th>
+            <th scope="col">Type of Wire Transfer(for Wires Only)</th>
+            <th scope="col">Account</th>
+            <th scope="col">Account Title</th>
+            <th scope="col">Account Type</th>
+            <th scope="col">Transaction Amount</th>
+            <th scope="col">First Fraudulent Transaction Date</th>
+            <th scope="col">Did Funds leave FRB?</th>
+            <th scope="col">Did the client initiate the Transactions?</th>
+            <th scope="col">How was the transaction initiated?</th>
+            <th scope="col">
+              How the transaction been recalled?* (for WIres only)
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let item of items; let i = index"
+            [ngModelGroup]="'row' + (i + 1)"
+          >
+            <td>
+              <select
+                class="form-select"
+                name="productType"
+                required
+                ngModel
+                #productType="ngModel"
+                [ngClass]="{
+                  'is-invalid': fraudDetailForm.submitted && productType.invalid
+                }"
+              >
+                <option value="wire">Wire</option>
+                <option value="ACHRDFI">ACH RDFI</option>
+                <option value="ACH ODFI">ACH ODFI</option>
+                <option value="consumerBillPay">Consumer BillPay</option>
+                <option value="corporateBillPay">Corporate BillPay</option>
+                <option value="Check">Check</option>
+                <option value="other">
+                  Other(e.g.cash or internal transfer)
+                </option>
+
+                <option
+                  value="card"
+                  *ngIf="fraudEvent.value !== 'reportFraudEvent'"
+                >
+                  Card
+                </option>
+
+                <option
+                  value="zelle"
+                  *ngIf="fraudEvent.value !== 'reportFraudEvent'"
+                >
+                  Zelle
+                </option>
+                <option
+                  value="transferNow"
+                  *ngIf="fraudEvent.value !== 'reportFraudEvent'"
+                >
+                  TransferNow
+                </option>
+              </select>
+              <div
+                class="invalid-feedback"
+                *ngIf="fraudDetailForm.submitted && productType.invalid"
+              >
+                <p *ngIf="productType?.errors?.required">
+                  This field is required
+                </p>
+              </div>
+            </td>
+            <td>
+              <select
+                class="form-select"
+                name="productType"
+                required
+                ngModel
+                #productType="ngModel"
+                [ngClass]="{
+                  'is-invalid': fraudDetailForm.submitted && productType.invalid
+                }"
+              >
+                <option value="domestic">Domestic</option>
+                <option value="internationalUS">International US$</option>
+                <option value="fxNonUS">FX Non-US$</option>
+              </select>
+              <div
+                class="invalid-feedback"
+                *ngIf="fraudDetailForm.submitted && productType.invalid"
+              >
+                <p *ngIf="productType?.errors?.required">
+                  This field is required
+                </p>
+              </div>
+            </td>
+            <td>
+              <input
+                type="text"
+                class="form-control"
+                name="account"
+                ngModel
+                required
+                #account="ngModel"
+                [ngClass]="{
+                  'is-invalid': fraudDetailForm.submitted && account.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="fraudDetailForm.submitted && account.invalid"
+              >
+                <p *ngIf="account?.errors?.required">This field is required</p>
+              </div>
+            </td>
+            <td>
+              <input
+                type="text"
+                class="form-control"
+                name="accountTitle"
+                ngModel
+                required
+                #accountTitle="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    fraudDetailForm.submitted && accountTitle.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="fraudDetailForm.submitted && accountTitle.invalid"
+              >
+                <p *ngIf="accountTitle?.errors?.required">
+                  This field is required
+                </p>
+              </div>
+            </td>
+            <td>
+              <input
+                type="text"
+                class="form-control"
+                name="subjectReport"
+                ngModel
+                required
+                #subjectReport="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    fraudDetailForm.submitted && subjectReport.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="fraudDetailForm.submitted && subjectReport.invalid"
+              >
+                <p *ngIf="subjectReport?.errors?.required">
+                  This field is required
+                </p>
+              </div>
+            </td>
+            <td>
+              <input
+                type="text"
+                class="form-control"
+                name="transactionAmount"
+                ngModel
+                required
+                #transactionAmount="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    fraudDetailForm.submitted && transactionAmount.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="fraudDetailForm.submitted && transactionAmount.invalid"
+              >
+                <p *ngIf="transactionAmount?.errors?.required">
+                  This field is required
+                </p>
+              </div>
+            </td>
+            <td>
+              <input
+                class="form-control"
+                type="date"
+                name="fraudTransactionDt"
+                ngModel
+              />
+            </td>
+            <td>
+              <select class="form-select" name="fundsFrb" ngModel>
+                <option value="0">Yes</option>
+                <option value="1">No</option>
+                <option value="2">Unknown</option>
+              </select>
+            </td>
+            <td>
+              <select class="form-select" name="clientInitTransaction" ngModel>
+                <option value="0">Yes</option>
+                <option value="1">No</option>
+                <option value="2">Unknown</option>
+              </select>
+            </td>
+            <td>
+              <select class="form-select" name="transactionIdentified" ngModel>
+                <option value="0">Online</option>
+                <option value="1">Email</option>
+                <option value="2">Fax</option>
+                <option value="3">In Person</option>
+              </select>
+            </td>
+            <td>
+              <select class="form-select" name="transactionRecall" ngModel>
+                <option value="0">Yes</option>
+                <option value="1">No</option>
+                <option value="2">Unknown</option>
+              </select>
+            </td>
+            <td>
+              <i class="bi bi-plus-circle" (click)="handleAdd()"></i>
+
+              <i
+                class="bi bi-dash-circle"
+                *ngIf="items.length > 1"
+                (click)="handleDelete(i)"
+              ></i>
+            </td>
+          </tr>
+          <div class="col-md-12">
+            <b>Total Transactions Amount </b>
+            <input
+              type="text"
+              class="form-control"
+              name="transactionAmount"
+              ngModel
+              required
+              #transactionAmount="ngModel"
+              [ngClass]="{
+                'is-invalid':
+                  fraudDetailForm.submitted && transactionAmount.invalid
+              }"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="fraudDetailForm.submitted && transactionAmount.invalid"
+            >
+              <p *ngIf="transactionAmount?.errors?.required">
+                This field is required
+              </p>
+            </div>
+          </div>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <p class="p-3 border bg-light my-4">
+      Note: If you are reporting more than 10 transactions, you can attach the
+      transaction details(in the form of spreadsheet or screenshot) in the
+      <a href="#">Attachments</a> section.
+    </p>
+  </div>
+</div>

@@ -1,0 +1,41 @@
+<div *ngIf="typeReport.value === 'nonTransactional'" ngModelGroup="fraudImpact">
+  <div class="row my-4" *ngFor="let item of items; let i = index">
+    <div
+      class="col-md-4"
+      title="If no Account number is found ,please enter N/A"
+    >
+      <span *ngIf="i === 0">Impacted Account Number(s)*</span>
+    </div>
+    <div class="col-md-4" [ngModelGroup]="'row' + (i + 1)">
+      <input
+        type="text"
+        class="form-control"
+        name="impactAccountName"
+        required
+        ngModel
+        #impactAccountName="ngModel"
+        [ngClass]="{
+          'is-invalid': fraudDetailForm.submitted && impactAccountName.invalid
+        }"5
+      />
+
+      <div
+        class="invalid-feedback"
+        *ngIf="fraudDetailForm.submitted && impactAccountName.invalid"
+      >
+        <p *ngIf="impactAccountName?.errors?.required">
+          This field is required
+        </p>
+      </div>
+    </div>
+    <div class="col-md-1">
+      <i class="bi bi-plus-circle" (click)="handleAdd()"></i>
+
+      <i
+        class="bi bi-dash-circle"
+        *ngIf="items.length > 1"
+        (click)="handleDelete(i)"
+      ></i>
+    </div>
+  </div>
+</div>

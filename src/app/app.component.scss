@@ -1,0 +1,21 @@
+@import '~bootstrap-icons/font/bootstrap-icons.css';
+
+p {
+  font-family: Lato;
+}
+.error {
+  color: red;
+}
+.addIcon {
+  float: right;
+}
+
+.bi-paperclip{
+    cursor: pointer;
+    &:after{
+        border-top: none;
+        border-left: none;
+        border-bottom: none;
+        border-right: none;
+    }
+}

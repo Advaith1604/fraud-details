@@ -1,0 +1,1005 @@
+<ng-template #upload let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Upload Attachments</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="mb-3">
+        <div class="input-group">
+          <input
+            class="form-control"
+            type="file"
+            id="file"
+            (change)="handleFileInput($event)"
+            multiple
+          />
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-danger"
+      (click)="modal.dismiss('Cancel click')"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="handleUploadSave()"
+    >
+      Save
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #viewFiles let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">View Attachments</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div *ngFor="let document of documentList; let i = index">
+      {{ document.name }} <i class="bi bi-trash" (click)="handleDelete(i)"></i>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #submit let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Submit form</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    Are all the details entered correct? Do you want to submit the referral
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      class="btn btn-danger"
+      (click)="modal.dismiss('cancel click')"
+    >
+      Cancel
+    </button>
+    <button type="button" (click)="modal.close('Ok click')">Ok</button>
+  </div>
+</ng-template>
+
+<ng-template #cancel let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Cancel Form</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="modal-body">
+      Are sure you want to Cancel? Info entered so far will not be saved?
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        class="btn btn-danger"
+        (click)="modal.dismiss('cancel click')"
+      >
+        Cancel
+      </button>
+      <button type="button" (click)="modal.close('Ok click')">Ok</button>
+    </div>
+  </div>
+</ng-template>
+
+<div class="container-fluid p-4">
+  <div class="row">
+    <div class="p-3 border bg-light">
+      <p>
+        The purpose of this form is to report fraud inquiries,fraud events and
+        internal fraud makers to Enterprise Fraud Management.
+      </p>
+
+      <p>
+        First Republic has specific channels for reporting certain types of
+        concerns in the event that your concern is not being addressed by
+        management,or if you are uncomfortable raising the concern with
+        management.Please follow the Speak Up! process to report non-fraud
+        internal bank concerns.
+      </p>
+      <p>https://collabrate.corp.firstrepublic.com/people/pages/speak-upaspx</p>
+    </div>
+  </div>
+  <form #fraudDetailForm="ngForm" (ngSubmit)="onSubmit(fraudDetailForm)">
+    <div class="row my-4">
+      <div class="p-3 border bg-light">
+        <h6>FRAUD EVENT DETAILS</h6>
+        <div class="row my-4">
+          <div
+            class="col-md-4 form-group"
+            title="A Bank matter in which fraud was attempted,perpetuated or successfully completed"
+          >
+            Type of Report
+          </div>
+          <div class="col-md-4">
+            <select
+              class="form-select"
+              name="reportType"
+              required
+              ngModel="reportFraudEvent"
+              (ngModelChange)="onChangeFraud($event)"
+              #reportType="ngModel"
+              [ngClass]="{
+                'is-invalid': fraudDetailForm.submitted && reportType.invalid
+              }"
+            >
+              <option value="reportFraudEvent" selected>
+                Report a Fraud Event
+              </option>
+              <option value="fraudInquiry">Fraud Inquiry</option>
+              <option value="internalIncident">Internal Incident</option>
+            </select>
+            <div
+              class="invalid-feedback"
+              *ngIf="fraudDetailForm.submitted && reportType.invalid"
+            >
+              <p *ngIf="reportType?.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="reportType.value !== 'internalIncident'">
+          <div class="row my-4">
+            <div
+              class="col-md-4"
+              title="A type of fraud that does not involve a payment,transfer or other type of monetary transaction"
+            >
+              Type of Fraud
+            </div>
+            <div class="col-md-4">
+              <select
+                class="form-select"
+                name="fraudTypeCd"
+                ngModel="transactional"
+                required
+                (ngModelChange)="transactionalChange($event)"
+                #fraudTypeCd="ngModel"
+                [ngClass]="{
+                  'is-invalid': fraudDetailForm.submitted && fraudTypeCd.invalid
+                }"
+              >
+                <option value="transactional" selected>Transactional</option>
+                <option value="nonTransactional">Non Transactional</option>
+              </select>
+              <div
+                class="invalid-feedback"
+                *ngIf="fraudDetailForm.submitted && fraudTypeCd.invalid"
+              >
+                <p *ngIf="fraudTypeCd?.errors?.required">
+                  This field is required
+                </p>
+              </div>
+            </div>
+          </div>
+          <div
+            *ngIf="
+              reportType.value === 'reportFraudEvent' &&
+              fraudTypeCd.value === 'transactional'
+            "
+          >
+            <div class="row my-4">
+              <div class="col-md-8">
+                <button type="button" class="btn btn-outline-primary me-md-4">
+                  Zelle/TransferNow
+                </button>
+                <button
+                  (click)="handleOtherProducts()"
+                  type="button"
+                  [class]="
+                    otherProducts
+                      ? 'btn btn-outline-primary active'
+                      : 'btn btn-outline-primary'
+                  "
+                >
+                  Other Products (ACH, BillPay, Check etc.
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            *ngIf="
+              otherProducts ||
+              (reportType.value === 'fraudInquiry' &&
+                fraudTypeCd.value === 'transactional') ||
+              fraudTypeCd.value === 'nonTransactional'
+            "
+          >
+            <div class="row my-4">
+              <div
+                class="col-md-4"
+                title="Name of the Individual or entity you are inquiring about if name of the subject is unknown ,please enter 'Unknown' , if the Inquiry is not related to subject,please enter 'N/A'"
+              >
+                Full Name of the Subject*
+              </div>
+              <div class="col-md-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  name="subjectIn"
+                  ngModel
+                  required
+                  #subjectIn="ngModel"
+                  [ngClass]="{
+                    'is-invalid': fraudDetailForm.submitted && subjectIn.invalid
+                  }"
+                />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="fraudDetailForm.submitted && subjectIn.invalid"
+                >
+                  <p *ngIf="subjectIn?.errors?.required">
+                    This field is required
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="row my-4">
+              <div class="col-md-4">Subject Type*</div>
+              <div class="col-md-4">
+                <select
+                  class="form-select"
+                  name="subjectTypeCd"
+                  ngModel="client"
+                  required
+                  #subjectTypeCd="ngModel"
+                  [ngClass]="{
+                    'is-invalid':
+                      fraudDetailForm.submitted && subjectTypeCd.invalid
+                  }"
+                >
+                  <option value="client">Client</option>
+                  <option value="formerClient">Former Client</option>
+                  <option value="prospectiveClient">Prospective Client</option>
+                  <option value="nonClient">Non - Client</option>
+                  <option value="Unknown">Unknown</option>
+                  <option value="N/A">N/A</option>
+                </select>
+                <div
+                  class="invalid-feedback"
+                  *ngIf="fraudDetailForm.submitted && subjectTypeCd.invalid"
+                >
+                  <p *ngIf="subjectTypeCd?.errors?.required">
+                    This field is required
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              *ngIf="
+                subjectTypeCd.value === 'client' ||
+                subjectTypeCd.value === 'formerClient'
+              "
+            >
+              <div class="row my-4">
+                <div class="col-md-4">
+                  Subject Tax ID*
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="fraudDetailForm.submitted && subjectTaxId.invalid"
+                  >
+                    <p *ngIf="subjectTaxId?.errors?.required">
+                      This field is required
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="subjectTaxId"
+                    ngModel
+                    required
+                    #subjectTaxId="ngModel"
+                    [ngClass]="{
+                      'is-invalid':
+                        fraudDetailForm.submitted &&
+                        subjectTypeCd.value === 'client' &&
+                        subjectTaxId.invalid
+                    }"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="
+                      fraudDetailForm.submitted &&
+                      subjectTypeCd.value === 'client' &&
+                      subjectTaxId.invalid
+                    "
+                  >
+                    <p *ngIf="subjectTaxId?.errors?.required">
+                      This field is required
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row my-4">
+                <div
+                  class="col-md-4"
+                  title="If no Customer key is found ,please enter N/A"
+                >
+                  Customer Key *
+                </div>
+                <div class="col-md-4">
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="customerId"
+                    required
+                    ngModel
+                    mask="(000) 000-0000"
+                    #customerId="ngModel"
+                    [ngClass]="{
+                      'is-invalid':
+                        fraudDetailForm.submitted &&
+                        customerId.invalid &&
+                        subjectTypeCd.value === 'client'
+                    }"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="
+                      fraudDetailForm.submitted &&
+                      customerId.invalid &&
+                      subjectTypeCd.value === 'client'
+                    "
+                  >
+                    <p *ngIf="customerId?.errors?.required">
+                      This field is required
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <app-fraud-impact
+              [typeReport]="fraudTypeCd"
+              [fraudDetailForm]="fraudDetailForm"
+            ></app-fraud-impact>
+
+            <div class="row my-4">
+              <div class="col-md-4">Client Type*</div>
+              <div class="col-md-4">
+                <select
+                  class="form-select"
+                  name="custTypeCd"
+                  required
+                  ngModel
+                  #custTypeCd="ngModel"
+                  [ngClass]="{
+                    'is-invalid':
+                      fraudDetailForm.submitted && custTypeCd.invalid
+                  }"
+                >
+                  <option value="consumer">Consumer</option>
+                  <option value="business">Business</option>
+                  <option value="both">Both</option>
+                </select>
+                <div
+                  class="invalid-feedback"
+                  *ngIf="fraudDetailForm.submitted && custTypeCd.invalid"
+                >
+                  <p *ngIf="custTypeCd?.errors?.required">
+                    This field is required
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="row my-4">
+              <div
+                class="col-md-4"
+                title="Client's account or Online Banking is compromised(i.,e no fraud or scam involved)"
+              >
+                Does this referral involve on Account Takeover?*
+              </div>
+              <div class="col-md-4">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="acctTakeoverIn"
+                    value="yes"
+                    ngModel
+                  />
+                  <label class="form-check-label" for="flexRadioDefault1">
+                    Yes
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="acctTakeoverIn"
+                    ngModel
+                    value="no"
+                  />
+                  <label class="form-check-label" for="flexRadioDefault2">
+                    No
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="row my-4"
+              *ngIf="
+                reportType.value === 'reportFraudEvent' &&
+                fraudTypeCd.value === 'transactional'
+              "
+            >
+              <div
+                class="col-md-4"
+                title="Occurs when a person or entity takes the personal property of an elder(defined as any person 65 years or older),with the intent to wrongfully use or defraud"
+              >
+                Does this referral involve potential Elder Financial
+                Exploitation?*
+              </div>
+              <div class="col-md-1">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="elderExploitIn"
+                    value="yes"
+                    ngModel
+                    #involve="ngModel"
+                  />
+                  <label class="form-check-label" for="flexRadioDefault1">
+                    Yes
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="elderExploitIn"
+                    value="no"
+                    ngModel
+                  />
+                  <label class="form-check-label" for="flexRadioDefault2">
+                    No
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div
+                  class="border p-2 bg-white"
+                  *ngIf="involve.value === 'yes'"
+                >
+                  <p>
+                    Please attach Form SOC342 in the Attachments Section,if the
+                    form (section A-f) ha been completed.
+                  </p>
+                  <p>
+                    If Form SOC342 (section A-f) has not been completed,please
+                    send it to the Fraud Mailbox within 48 hours of submitting
+                    this Reference ID in the email Subject.
+                  </p>
+                  <p>You can download the Form from the following location:</p>
+                  <p>
+                    https://www.cdss.co.gov/cdssweb/entres/forms/English/soc342.pdf
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="row my-4">
+              <div
+                class="col-md-4"
+                title="A crime in which a suspect illegals obtains and uses another person's personal data to commit fraud or deception "
+              >
+                Is this referral related to Identity Theft?*
+              </div>
+              <div class="col-md-4">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="idTheftRelatedIn"
+                    value="yes"
+                    ngModel
+                  />
+                  <label class="form-check-label" for="flexRadioDefault1">
+                    Yes
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="idTheftRelatedIn"
+                    value="no"
+                    ngModel
+                  />
+                  <label class="form-check-label" for="flexRadioDefault2">
+                    No
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="row my-4">
+              <div class="col-md-12">
+                <textarea
+                  class="form-control"
+                  name="eventDetailsDesc"
+                  ngModel
+                ></textarea>
+              </div>
+            </div>
+
+            <div
+              class="row my-4"
+              *ngIf="
+                (reportType.value === 'reportFraudEvent' &&
+                  fraudTypeCd.value === 'transactional') ||
+                (reportType.value === 'fraudInquiry' &&
+                  fraudTypeCd.value === 'transactional')
+              "
+            >
+              <app-fraud-activity-details
+                [fraudDetailForm]="fraudDetailForm"
+                [fraudEvent]="reportType"
+              ></app-fraud-activity-details>
+            </div>
+
+            <div class="row my-4">
+              <div class="p-3 border bg-light">
+                <h6>REFERRAL DETAILS</h6>
+                <div class="row my-4">
+                  <div class="col-md-4">Reported By*</div>
+                  <div class="col-md-4">
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="referralReportedBy"
+                      required
+                      ngModel
+                      #referralReportedBy="ngModel"
+                      [ngClass]="{
+                        'is-invalid':
+                          fraudDetailForm.submitted &&
+                          referralReportedBy.invalid
+                      }"
+                    />
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="
+                        fraudDetailForm.submitted && referralReportedBy.invalid
+                      "
+                    >
+                      <p *ngIf="referralReportedBy?.errors?.required">
+                        This field is required
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row my-4">
+                  <div class="col-md-4">Referral Department*</div>
+                  <div class="col-md-4">
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="referralDeptNm"
+                      ngModel
+                      required
+                      #referralDeptNm="ngModel"
+                      [ngClass]="{
+                        'is-invalid':
+                          fraudDetailForm.submitted && referralDeptNm.invalid
+                      }"
+                    />
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="
+                        fraudDetailForm.submitted && referralDeptNm.invalid
+                      "
+                    >
+                      <p *ngIf="referralDeptNm?.errors?.required">
+                        This field is required
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row my-4">
+                  <div class="col-md-4">How as the matter Identified?**</div>
+                  <div class="col-md-4 w-25">
+                    <select
+                      class="form-select"
+                      name="matterIdentifiedCd"
+                      ngModel="0"
+                      required
+                      #matterIdentifiedCd="ngModel"
+                      [ngClass]="{
+                        'is-invalid':
+                          fraudDetailForm.submitted &&
+                          matterIdentifiedCd.invalid
+                      }"
+                    >
+                      <option value="0">Client Reported</option>
+                      <option value="1">Banker Identified</option>
+                      <option value="2">
+                        Other FRB business until Identified
+                      </option>
+                      <option value="3">Law Enforcement</option>
+                      <option value="4">Other Financial</option>
+                      <option value="5">Other</option>
+                    </select>
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="
+                        fraudDetailForm.submitted && matterIdentifiedCd.invalid
+                      "
+                    >
+                      <p *ngIf="matterIdentifiedCd?.errors?.required">
+                        This field is required
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="col-md-4 w-25"
+                    *ngIf="fraudTypeCd.value !== 'transactional'"
+                  >
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="matterfield"
+                      ngModel
+                      required
+                      #matterfield="ngModel"
+                      [ngClass]="{
+                        'is-invalid':
+                          fraudDetailForm.submitted && matterfield.invalid
+                      }"
+                    />
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="fraudDetailForm.submitted && matterfield.invalid"
+                    >
+                      <p *ngIf="matterfield?.errors?.required">
+                        This field is required
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="reportType.value === 'internalIncident'">
+          <div class="row my-4">
+            <div class="col-md-4">Do you want to remain anonymous?*</div>
+            <div class="col-md-4">
+              <select
+                class="form-select"
+                name="anonymous"
+                ngModel="0"
+                required
+                #anonymous="ngModel"
+                [ngClass]="{
+                  'is-invalid': fraudDetailForm.submitted && anonymous.invalid
+                }"
+              >
+                <option value="0">Yes</option>
+                <option value="1">No</option>
+              </select>
+              <div
+                class="invalid-feedback"
+                *ngIf="fraudDetailForm.submitted && anonymous.invalid"
+              >
+                <p *ngIf="anonymous?.errors?.required">
+                  This field is required
+                </p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div
+                class="border m-2 p-2 bg-white"
+                *ngIf="anonymous.value === '0'"
+              >
+                <p>
+                  Disclaimer : <br />
+                  We don't collect any personal information from the website<br />
+                  Alternatively , you can call on +1()
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row my-4">
+            <div class="col-md-4">Reported By *</div>
+            <div class="col-md-4">
+              <input
+                type="text"
+                class="form-control"
+                name="reportBy"
+                ngModel
+                required
+                #reportBy="ngModel"
+                [ngClass]="{
+                  'is-invalid': fraudDetailForm.submitted && reportBy.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="fraudDetailForm.submitted && reportBy.invalid"
+              >
+                <p *ngIf="reportBy?.errors?.required">This field is required</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div
+                class="border m-2 p-2 bg-white"
+                *ngIf="anonymous.value === '0'"
+              >
+                <p>
+                  Please use the following link for Anonymous Reporting;<br />
+                  https://--
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row my-4">
+            <div
+              class="col-md-4"
+              title="Please provide your email(personal/office)if you want us to contact you"
+            >
+              Preferred Email *
+            </div>
+            <div class="col-md-4">
+              <input
+                type="text"
+                class="form-control"
+                name="preferredEmail"
+                ngModel
+                required
+                #preferredEmail="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    fraudDetailForm.submitted && preferredEmail.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="fraudDetailForm.submitted && preferredEmail.invalid"
+              >
+                <p *ngIf="preferredEmail?.errors?.required">
+                  This field is required
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row my-4">
+            <div
+              class="col-md-4"
+              title="Please provide your phone number(personal/office)if you want us to contact you"
+            >
+              Preferred Phone Number *
+            </div>
+            <div class="col-md-4">
+              <input
+                type="text"
+                class="form-control"
+                name="preferredPhone"
+                ngModel
+                required
+                #preferredPhone="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    fraudDetailForm.submitted && preferredPhone.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="fraudDetailForm.submitted && preferredPhone.invalid"
+              >
+                <p *ngIf="preferredPhone?.errors?.required">
+                  This field is required
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row my-4">
+            <div
+              class="col-md-4"
+              title="Client's account or Online banking is compromissed (i.e no fraud scam involved)"
+            >
+              <p>Does this referral involve on Account Takeover?*</p>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="accountTakeOver"
+                  value="yes"
+                  ngModel
+                />
+                <label class="form-check-label" for="flexRadioDefault1">
+                  Yes
+                </label>
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="accountTakeOver"
+                  ngModel
+                  value="no"
+                />
+                <label class="form-check-label" for="flexRadioDefault2">
+                  No
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row my-4">
+            <div class="col-md-4">
+              <p>Did you report this Incident somewhere else?*</p>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="incident"
+                  value="yes"
+                  ngModel
+                />
+                <label class="form-check-label" for="flexRadioDefault1">
+                  Yes
+                </label>
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="incident"
+                  ngModel
+                  value="no"
+                />
+                <label class="form-check-label" for="flexRadioDefault2">
+                  No
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row my-4">
+            <div
+              class="col-md-4"
+              title="Please provide the name of the person(s) or department(s)"
+            >
+              Who did you report this Incident to?*
+            </div>
+            <div class="col-md-4">
+              <input
+                type="text"
+                class="form-control"
+                name="reportIncident"
+                ngModel
+                required
+                #preferredPhone="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    fraudDetailForm.submitted && preferredPhone.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="fraudDetailForm.submitted && preferredPhone.invalid"
+              >
+                <p *ngIf="preferredPhone?.errors?.required">
+                  This field is required
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <app-subject-details
+            [fraudDetailForm]="fraudDetailForm"
+          ></app-subject-details>
+        </div>
+
+        <div class="row my-4">
+          <div class="p-3 border bg-light">
+            <h6>ATTACHMENTS</h6>
+            <div class="row my-4">
+              <div class="col-md-12">
+                <div>
+                  If the fraudulent Transaction invoices a wire, please provide
+                  the following documents, if available.
+                  <div ngbDropdown class="d-inline-block">
+                    <i class="bi bi-paperclip" ngbDropdownToggle></i>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                      <button
+                        type="button"
+                        ngbDropdownItem
+                        (click)="open(upload)"
+                      >
+                        Upload Documents <i class="bi bi-upload"></i>
+                      </button>
+                      <button
+                        type="button"
+                        ngbDropdownItem
+                        (click)="open(viewFiles)"
+                      >
+                        View Documents
+                        <i class="bi bi-file-earmark-check-fill"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <ul>
+                  <li>Wire Instructions</li>
+                  <li>Wire Callback Form</li>
+                  <li>Wire Tracker Form</li>
+                  <li>Client correspondence</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row my-4">
+          <div class="col-md-12 text-center">
+            <button
+              type="button"
+              (click)="open(cancel)"
+              class="btn btn-secondary me-md-4"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              (click)="open(submit)"
+              class="btn btn-primary"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <pre>{{ fraudDetailForm.value | json }}</pre>
+  </form>
+</div>

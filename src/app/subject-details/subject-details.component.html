@@ -1,0 +1,132 @@
+<div class="p-3 border bg-light">
+  <h6>SUBJECT DETAILS</h6>
+  <div class="row my-4">
+    <div class="col-md-12" ngModelGroup="fraudIntakeSubjectBean">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Subject Type</th>
+            <th scope="col">Network ID</th>
+            <th scope="col">Full Name of the Subject</th>
+            <th scope="col">Office Name</th>
+            <th scope="col">Subject Department</th>
+            <th scope="col">Region</th>
+            <th scope="col">Manager's Name</th>
+            <th scope="col">HR Business Partner Name</th>
+            <th scope="col">Employee Initials</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let item of items; let i = index"
+            [ngModelGroup]="'row' + (i + 1)"
+          >
+            <td>
+              <select
+                class="form-select"
+                name="fraudSubjectId"
+                required
+                ngModel="employee"
+                #fraudSubjectId="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    fraudDetailForm.submitted && fraudSubjectId.invalid
+                }"
+              >
+                <option value="employee">Employee</option>
+                <option value="ACHRDFI">ACH RDFI</option>
+                <option value="ACH ODFI">ACH ODFI</option>
+                <option value="consumerBillPay">Consumer BillPay</option>
+                <option value="corporateBillPay">Corporate BillPay</option>
+                <option value="Check">Check</option>
+                <option value="other">
+                  Other(e.g.cash or internal transfer)
+                </option>
+              </select>
+              <div
+                class="invalid-feedback"
+                *ngIf="fraudDetailForm.submitted && fraudSubjectId.invalid"
+              >
+                <p *ngIf="fraudSubjectId?.errors?.required">
+                  This field is required
+                </p>
+              </div>
+            </td>
+            <td>
+              <input
+                class="form-control"
+                type="text"
+                name="networkId"
+                ngModel
+              />
+            </td>
+            <td>
+              <input
+                class="form-control"
+                type="text"
+                name="subjectNm"
+                ngModel
+              />
+            </td>
+            <td>
+              <input class="form-control" type="text" name="officeNm" ngModel />
+            </td>
+            <td>
+              <input
+                class="form-control"
+                type="text"
+                name="subjectDep"
+                ngModel
+              />
+            </td>
+            <td>
+              <input class="form-control" type="text" name="region" ngModel />
+            </td>
+            <td>
+              <input
+                class="form-control"
+                type="text"
+                name="managerNm"
+                ngModel
+              />
+            </td>
+            <td>
+              <input
+                class="form-control"
+                type="text"
+                name="hrPartnerNm"
+                ngModel
+              />
+            </td>
+            <td>
+              <input
+                class="form-control"
+                type="text"
+                name="empInitial"
+                ngModel
+              />
+            </td>
+            <td>
+              <i class="bi bi-plus-circle" (click)="handleAdd()"></i>
+
+              <i
+                class="bi bi-dash-circle"
+                *ngIf="items.length > 1"
+                (click)="handleDelete(i)"
+              ></i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <p class="p-3 border bg-light my-4">
+      Please describe the Sensitive Matter, including dates,parties involved and
+      methods*(8000 mx) <br />
+      <br />
+
+      If you need to provide more information,please attach in a word doc
+    </p>
+  </div>
+</div>
